@@ -8,50 +8,76 @@ namespace WindowsFormsApp1
 {
     namespace WindowsFormsApp1
     {
-        public class Outerwear
+        public interface IProduct
         {
-            public string Element { get; set; }
+            string Brand { get; set; }
+            double Price { get; set; }
+            double GetPriceWithDiscount(double discount);
+            string GetInfo();
+        }
+
+        public abstract class Product : IProduct
+        {
             public string Brand { get; set; }
-            public string Size { get; set; }
             public double Price { get; set; }
 
-            // Конструктор за замовчуванням
-            public Outerwear()
+            protected Product()
             {
-                Element = "";
                 Brand = "";
-                Size = "";
                 Price = 0.0;
             }
 
-            // Конструктор з параметрами
-            public Outerwear(string element, string brand, string size, double price)
+            protected Product(string brand, double price)
             {
-                Element = element;
                 Brand = brand;
-                Size = size;
                 Price = price;
             }
-          
 
-            // Обчислення ціни зі знижкою 10%
-            public double PriceWithDiscount(double discount)
+            public virtual double GetPriceWithDiscount(double discount)
             {
-                return Price * 100/discount;
+                if (discount < 0 || discount > 1)
+                    throw new ArgumentException("Discount must be between 0 and 1.");
+
+                return Price - (Price * discount);
             }
 
-            // Обчислення сумарної ціни для кількох одиниць
-            public double TotalPrice(int quantity)
+            public abstract string GetInfo();
+        }
+
+    
+            public class PetClothing
             {
-                return Price * quantity;
+                public string Category { get; set; }     // Наприклад: Clothing, Toys...
+                public string Brand { get; set; }        // Наприклад: Armani, PetStyle...
+                public string Size { get; set; }         // Наприклад: M, L, XL...
+                public double Price { get; set; }        // Ціна
+                public double TotalPrice => Price;       // Властивість для відображення (можна буде змінити з урахуванням знижки)
+
+                public PetClothing(string category, string brand, string size, double price)
+                {
+                    Category = category;
+                    Brand = brand;
+                    Size = size;
+                    Price = price;
+                }
+
+                public string Info()
+                {
+                    return $"{Category} | {Brand} | {Size} | {Price:0.##} €";
+                }
+            
+        
+
+
+        public void ChangeSize(string newSize)
+            {
+                Size = newSize;
             }
 
-            // Метод виводу інформації
-            public string Info()
+            public bool IsDiscountAvailable(double discount)
             {
-                return $"Item: {Element}, Brand: {Brand}, Size: {Size}, Price: {Price} €, With Discount: {PriceWithDiscount():0.00} €";
+                return discount > 0 && discount <= 0.5;
             }
         }
     }
-
 }
